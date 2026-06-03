@@ -5,11 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>3T Paracords and Crafts</title>
 
-  <!-- Favicon & Icons -->
   <link rel="icon" type="image/png" href="icon.png">
   <link rel="apple-touch-icon" href="icon-192.png">
 
-  <!-- PWA -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -18,217 +16,129 @@
   <meta name="theme-color" content="#2c3823">
   <meta name="description" content="3T Paracords and Crafts — handcrafted paracord bracelets, keychains, lanyards, and pet gear. Made to order in the Philippines.">
 
-  <!-- MS Tiles -->
   <meta name="msapplication-TileImage" content="icon-192.png">
   <meta name="msapplication-TileColor" content="#2c3823">
   <meta name="msapplication-tap-highlight" content="no">
 
-  <!-- Open Graph -->
   <meta property="og:title"       content="3T Paracords and Crafts">
   <meta property="og:description" content="Handcrafted cord gear — bracelets, keychains, lanyards &amp; pet gear. Made to order.">
   <meta property="og:type"        content="website">
   <meta property="og:image"       content="icon-512.png">
   <meta name="twitter:card"       content="summary">
-  <meta name="twitter:title"      content="3T Paracords and Crafts">
-  <meta name="twitter:description" content="Handcrafted paracord gear, made to order in the Philippines.">
 
-  <!-- Manifest — required for real PWA install -->
   <link rel="manifest" href="manifest.json">
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #241f17; width: 100vw; height: 100vh; overflow: hidden; }
+    body { background: #241f17; width: 100vw; height: 100vh; overflow: hidden;
+           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
 
     /* ── SPLASH ── */
     #splash {
-      position: fixed; top: 0; left: 0;
-      width: 100%; height: 100%;
+      position: fixed; inset: 0;
       background: radial-gradient(ellipse at center, #3b4a2f 0%, #2c3823 65%, #241f17 100%);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      z-index: 999; transition: opacity 0.6s ease;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 999; transition: opacity 0.6s ease; padding: 24px;
     }
+    #splash .logo-wrap { position: relative; width: 170px; height: 170px;
+      display: flex; align-items: center; justify-content: center; }
+    #splash .logo-wrap::before { content:''; position:absolute; inset:-10px; border-radius:50%;
+      border:3px solid transparent; border-top-color:#c2622d; border-right-color:#c2622d;
+      animation: spin 2s linear infinite; }
+    #splash .logo-wrap::after { content:''; position:absolute; inset:-16px; border-radius:50%;
+      border:2px solid transparent; border-bottom-color:#6f8456; border-left-color:#6f8456;
+      animation: spin 3s linear infinite reverse; }
+    #splash img { width:150px; height:150px; border-radius:50%; object-fit:cover; background:#fbf8f1;
+      box-shadow: 0 0 0 3px #c2622d, 0 0 40px rgba(194,98,45,0.45), 0 10px 40px rgba(0,0,0,0.7);
+      animation: pulse 2s ease-in-out infinite; }
+    #splash .logo-fallback { width:150px; height:150px; border-radius:50%;
+      background: linear-gradient(135deg, #3b4a2f, #c2622d); display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      box-shadow: 0 0 0 3px #c2622d, 0 0 40px rgba(194,98,45,0.45), 0 10px 40px rgba(0,0,0,0.7);
+      animation: pulse 2s ease-in-out infinite; }
+    #splash .logo-fallback .mark { font-family:'Georgia',serif; font-weight:900; font-size:46px; color:#fff; line-height:1; }
+    #splash .logo-fallback span { color:rgba(255,255,255,0.9); font-size:9px; font-weight:800;
+      margin-top:6px; letter-spacing:1.5px; }
+    #splash .app-name { color:#fff; font-family:'Georgia','Times New Roman',serif; font-size:30px;
+      font-weight:900; margin-top:30px; letter-spacing:0.5px;
+      text-shadow: 0 0 20px rgba(194,98,45,0.5), 0 2px 8px rgba(0,0,0,0.7); }
+    #splash .app-name b { color:#d98a3d; }
+    #splash .app-sub { color:rgba(255,255,255,0.62); font-size:12px; font-weight:500; margin-top:5px;
+      letter-spacing:3px; text-transform:uppercase; }
+    #splash .app-tagline { color:rgba(217,138,61,0.9); font-size:11px; font-weight:600; margin-top:6px; }
+    #splash .loading-bar-wrap { margin-top:38px; width:180px; height:3px; background:rgba(255,255,255,0.12);
+      border-radius:4px; overflow:hidden; }
+    #splash .loading-bar { height:100%; width:0%; background:linear-gradient(90deg,#3b4a2f,#c2622d);
+      border-radius:4px; animation: loadbar 4s ease-in-out forwards; box-shadow:0 0 10px rgba(194,98,45,0.7); }
 
-    #splash .logo-wrap {
-      position: relative;
-      width: 170px; height: 170px;
-      display: flex; align-items: center; justify-content: center;
-    }
+    /* "Tap to open" fallback + setup message (shown only if needed) */
+    #openBtn, #setupMsg { display:none; }
+    #openBtn { margin-top:26px; background:#c2622d; color:#fff; border:none; border-radius:100px;
+      padding:13px 26px; font-size:14px; font-weight:700; cursor:pointer;
+      box-shadow:0 6px 20px rgba(194,98,45,0.4); text-decoration:none; }
+    #splash .hint { color:rgba(255,255,255,0.5); font-size:11px; margin-top:12px; }
+    #setupMsg { color:#fbf8f1; max-width:340px; text-align:center; margin-top:22px; line-height:1.6; }
+    #setupMsg b { color:#d98a3d; }
+    #setupMsg code { background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:5px; font-size:11px; word-break:break-all; }
 
-    /* Outer spinning ring — burnt orange */
-    #splash .logo-wrap::before {
-      content: '';
-      position: absolute; inset: -10px;
-      border-radius: 50%;
-      border: 3px solid transparent;
-      border-top-color: #c2622d;
-      border-right-color: #c2622d;
-      animation: spin 2s linear infinite;
-    }
-
-    /* Inner spinning ring — light olive (reverse) */
-    #splash .logo-wrap::after {
-      content: '';
-      position: absolute; inset: -16px;
-      border-radius: 50%;
-      border: 2px solid transparent;
-      border-bottom-color: #6f8456;
-      border-left-color: #6f8456;
-      animation: spin 3s linear infinite reverse;
-    }
-
-    #splash img {
-      width: 150px; height: 150px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: #fbf8f1;
-      box-shadow:
-        0 0 0 3px #c2622d,
-        0 0 40px rgba(194,98,45,0.45),
-        0 10px 40px rgba(0,0,0,0.7);
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    /* Fallback logo — shown if icon-192.png fails to load */
-    #splash .logo-fallback {
-      width: 150px; height: 150px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #3b4a2f, #c2622d);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      box-shadow:
-        0 0 0 3px #c2622d,
-        0 0 40px rgba(194,98,45,0.45),
-        0 10px 40px rgba(0,0,0,0.7);
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    #splash .logo-fallback .mark {
-      font-family: 'Georgia', serif; font-weight: 900;
-      font-size: 46px; color: #fff; line-height: 1;
-    }
-
-    #splash .logo-fallback span {
-      color: rgba(255,255,255,0.9);
-      font-size: 9px; font-weight: 800;
-      margin-top: 6px; letter-spacing: 1.5px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    }
-
-    #splash .app-name {
-      color: #fff;
-      font-family: 'Georgia', 'Times New Roman', serif;
-      font-size: 30px; font-weight: 900;
-      margin-top: 30px; letter-spacing: 0.5px;
-      text-shadow: 0 0 20px rgba(194,98,45,0.5), 0 2px 8px rgba(0,0,0,0.7);
-    }
-    #splash .app-name b { color: #d98a3d; }
-
-    #splash .app-sub {
-      color: rgba(255,255,255,0.62);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      font-size: 12px; font-weight: 500;
-      margin-top: 5px; letter-spacing: 3px; text-transform: uppercase;
-    }
-
-    #splash .app-tagline {
-      color: rgba(217,138,61,0.9);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      font-size: 11px; font-weight: 600;
-      margin-top: 6px; letter-spacing: 0.5px;
-    }
-
-    #splash .loading-bar-wrap {
-      margin-top: 38px; width: 180px; height: 3px;
-      background: rgba(255,255,255,0.12);
-      border-radius: 4px; overflow: hidden;
-    }
-
-    #splash .loading-bar {
-      height: 100%; width: 0%;
-      background: linear-gradient(90deg, #3b4a2f, #c2622d);
-      border-radius: 4px;
-      animation: loadbar 4s ease-in-out forwards;
-      box-shadow: 0 0 10px rgba(194,98,45,0.7);
-    }
-
-    @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes loadbar { 0%{width:0%} 40%{width:60%} 80%{width:85%} 100%{width:100%} }
 
-    /* ── APP IFRAME ── */
-    #app-frame {
-      position: fixed; top: 0; left: 0;
-      width: 100%; height: 100%;
-      border: none; z-index: 1;
-    }
+    #app-frame { position: fixed; inset: 0; width:100%; height:100%; border:none; z-index:1; background:#e7dfce; }
 
-    /* ── INSTALL BANNER ── */
-    #installBanner {
-      display: none;
-      position: fixed; bottom: 20px; left: 12px; right: 12px;
-      z-index: 998;
-      background: #fbf8f1;
-      border-radius: 16px;
-      box-shadow: 0 4px 24px rgba(36,31,23,0.22);
-      border: 1.5px solid #e7dfce;
-      padding: 14px 16px;
-      align-items: center; gap: 12px;
-    }
-    #installBanner img { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; }
-    #installBanner .ib-text { flex: 1; min-width: 0; }
-    #installBanner .ib-title {
-      font-weight: 800; font-size: 14px; color: #241f17;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    }
-    #installBanner .ib-sub {
-      font-size: 12px; color: #8a8270; margin-top: 2px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    }
-    #installBanner .ib-install {
-      background: linear-gradient(135deg, #3b4a2f, #c2622d);
-      color: #fff; border: none; border-radius: 10px;
-      padding: 9px 16px; font-size: 12px; font-weight: 700;
-      cursor: pointer; white-space: nowrap; flex-shrink: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    }
-    #installBanner .ib-close {
-      background: none; border: none; color: #8a8270;
-      font-size: 20px; cursor: pointer; padding: 4px;
-      flex-shrink: 0; line-height: 1;
-    }
+    /* INSTALL BANNER */
+    #installBanner { display:none; position:fixed; bottom:20px; left:12px; right:12px; z-index:998;
+      background:#fbf8f1; border-radius:16px; box-shadow:0 4px 24px rgba(36,31,23,0.22);
+      border:1.5px solid #e7dfce; padding:14px 16px; align-items:center; gap:12px; }
+    #installBanner img { width:44px; height:44px; border-radius:12px; flex-shrink:0; }
+    #installBanner .ib-text { flex:1; min-width:0; }
+    #installBanner .ib-title { font-weight:800; font-size:14px; color:#241f17; }
+    #installBanner .ib-sub { font-size:12px; color:#8a8270; margin-top:2px; }
+    #installBanner .ib-install { background:linear-gradient(135deg,#3b4a2f,#c2622d); color:#fff; border:none;
+      border-radius:10px; padding:9px 16px; font-size:12px; font-weight:700; cursor:pointer;
+      white-space:nowrap; flex-shrink:0; }
+    #installBanner .ib-close { background:none; border:none; color:#8a8270; font-size:20px; cursor:pointer;
+      padding:4px; flex-shrink:0; line-height:1; }
   </style>
 </head>
 <body>
 
+  <!-- ═══════════════════════════════════════════════════════════════
+       SET YOUR APP URL HERE  ▼▼▼
+       Paste your deployed Apps Script Web App URL (must end in /exec).
+       Deploy ▸ New deployment ▸ Web app ▸ Who has access: "Anyone" ▸ copy URL.
+       ═══════════════════════════════════════════════════════════════ -->
+  <script>
+    var APP_URL = "https://script.google.com/macros/s/AKfycbwILRFoNkHfPeiTZ7vatTrEKDSpnXB8YDylWGI-pthOphgOZNzOhmYGbYqfCr8crqINbw/exec";
+  </script>
+
   <!-- ═══ SPLASH SCREEN ═══ -->
   <div id="splash">
     <div class="logo-wrap">
-      <img
-        src="icon-192.png"
-        alt="3T Paracords and Crafts"
-        onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='flex';"
-      >
+      <img src="icon-192.png" alt="3T Paracords and Crafts"
+           onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='flex';">
       <div class="logo-fallback" id="logo-fallback" style="display:none;">
-        <div class="mark">3T</div>
-        <span>PARACORDS</span>
+        <div class="mark">3T</div><span>PARACORDS</span>
       </div>
     </div>
     <div class="app-name">3T <b>Paracords</b></div>
     <div class="app-sub">and Crafts</div>
     <div class="app-tagline">Handcrafted Cord Gear · PH</div>
-    <div class="loading-bar-wrap"><div class="loading-bar"></div></div>
+    <div class="loading-bar-wrap" id="loadbarWrap"><div class="loading-bar"></div></div>
+
+    <a id="openBtn" href="#" target="_blank" rel="noopener">Open 3T Paracords  &rarr;</a>
+    <div class="hint" id="openHint" style="display:none;">Taking a while? Tap the button above.</div>
+
+    <div id="setupMsg">
+      <b>Almost there!</b><br>
+      Open <code>index.html</code> and replace the placeholder
+      <code>APP_URL</code> with your Apps Script Web App URL ending in <code>/exec</code>,
+      then re-upload to GitHub.
+    </div>
   </div>
 
-  <!-- ═══ MAIN APP ═══
-       IMPORTANT: replace the src below with YOUR deployed Apps Script Web App URL
-       (Deploy ▸ New deployment ▸ Web app ▸ copy the URL ending in /exec). -->
-  <iframe
-    id="app-frame"
-    src="https://script.google.com/macros/s/AKfycbwILRFoNkHfPeiTZ7vatTrEKDSpnXB8YDylWGI-pthOphgOZNzOhmYGbYqfCr8crqINbw/exec"
-    allow="fullscreen; clipboard-write"
-    allowfullscreen
-  ></iframe>
+  <iframe id="app-frame" allow="fullscreen; clipboard-write" allowfullscreen></iframe>
 
   <!-- ═══ PWA INSTALL BANNER ═══ -->
   <div id="installBanner">
@@ -242,54 +152,56 @@
   </div>
 
   <script>
-    // ── Service Worker registration (required for PWA) ──
+    var splash   = document.getElementById('splash');
+    var frame    = document.getElementById('app-frame');
+    var openBtn  = document.getElementById('openBtn');
+    var openHint = document.getElementById('openHint');
+    var setupMsg = document.getElementById('setupMsg');
+    var notConfigured = APP_URL.indexOf('REPLACE_WITH_YOUR_WEB_APP_ID') !== -1;
+
+    function hideSplash(){ splash.style.opacity='0'; setTimeout(function(){ splash.style.display='none'; }, 600); }
+
+    if (notConfigured) {
+      // Don't load a broken frame — show setup instructions instead of a blank screen.
+      document.getElementById('loadbarWrap').style.display = 'none';
+      setupMsg.style.display = 'block';
+    } else {
+      // Configure the iframe + the fallback "open" link
+      frame.src = APP_URL;
+      openBtn.href = APP_URL;
+
+      // Dismiss splash once the app frame loads
+      frame.onload = function () { setTimeout(hideSplash, 800); };
+
+      // Safety: dismiss after 6s even if onload never fires (cross-origin)
+      setTimeout(hideSplash, 6000);
+
+      // If it's taking long (e.g. browser blocks the embed), reveal a direct-open button
+      setTimeout(function () {
+        openBtn.style.display = 'inline-block';
+        openHint.style.display = 'block';
+      }, 4500);
+    }
+
+    // ── Service Worker ──
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
-        navigator.serviceWorker.register('sw.js')
-          .then(function (reg) { console.log('[SW] Registered:', reg.scope); })
-          .catch(function (err) { console.warn('[SW] Registration failed:', err); });
+        navigator.serviceWorker.register('sw.js').catch(function (e) { console.warn('SW failed', e); });
       });
     }
 
-    // ── Splash: dismiss when iframe finishes loading ──
-    var frame  = document.getElementById('app-frame');
-    var splash = document.getElementById('splash');
-
-    frame.onload = function () {
-      setTimeout(function () {
-        splash.style.opacity = '0';
-        setTimeout(function () { splash.style.display = 'none'; }, 600);
-      }, 1000);
-    };
-
-    // ── Safety fallback: always dismiss after 6 seconds ──
-    setTimeout(function () {
-      splash.style.opacity = '0';
-      setTimeout(function () { splash.style.display = 'none'; }, 600);
-    }, 6000);
-
-    // ── PWA Install prompt ──
+    // ── PWA install ──
     var deferredPrompt;
-
     window.addEventListener('beforeinstallprompt', function (e) {
-      e.preventDefault();
-      deferredPrompt = e;
+      e.preventDefault(); deferredPrompt = e;
       document.getElementById('installBanner').style.display = 'flex';
     });
-
     window.addEventListener('appinstalled', function () {
-      document.getElementById('installBanner').style.display = 'none';
-      deferredPrompt = null;
+      document.getElementById('installBanner').style.display = 'none'; deferredPrompt = null;
     });
-
-    function triggerInstall() {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(function () { deferredPrompt = null; });
-    }
-    function dismissInstall() {
-      document.getElementById('installBanner').style.display = 'none';
-    }
+    function triggerInstall(){ if(!deferredPrompt) return; deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function(){ deferredPrompt = null; }); }
+    function dismissInstall(){ document.getElementById('installBanner').style.display = 'none'; }
   </script>
 
 </body>
